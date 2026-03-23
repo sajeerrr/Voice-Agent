@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Event {
+  id              String        @id @default(uuid())
+  title           String
+  description     String        @default("")
+  type            String        // 'workshop' | 'competition'
+  maxParticipants Int           @default(50)
+  createdAt       DateTime      @default(now())
+  participants    Participant[]
+}
+
+model Participant {
+  id        String   @id @default(uuid())
+  eventId   String
+  name      String
+  email     String
+  college   String   @default("")
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String    @id @default(uuid())
+  roomId    String    @unique
+  status    String    @default("active") // 'active' | 'ended'
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  createdAt DateTime  @default(now())
+  messages  Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  sessionId String
+  role      String   // 'user' | 'assistant'
+  content   String
+  timestamp DateTime @default(now())
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}

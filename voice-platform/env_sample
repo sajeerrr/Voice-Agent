@@ -1,0 +1,6 @@
+DATABASE_URL="postgresql://user:password@postgres:5432/voice_ai"
+
+# LiveKit Configuration
+LIVEKIT_API_KEY="your-api-key"
+LIVEKIT_API_SECRET="your-api-secret"
+LIVEKIT_URL="your-livekit-url"
