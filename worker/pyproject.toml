@@ -1,0 +1,25 @@
+[project]
+name = "worker"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "risal-kv",email = "risal@keyvalue.systems"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "livekit-agents (>=1.5.0,<2.0.0)",
+    "livekit-plugins-deepgram (>=1.5.0,<2.0.0)",
+    "livekit-plugins-noise-cancellation (>=0.2.5,<0.3.0)",
+    "livekit-plugins-silero (>=1.5.0,<2.0.0)",
+    "livekit-plugins-turn-detector (>=1.5.0,<2.0.0)",
+    "pydantic-settings (>=2.13.1,<3.0.0)",
+    "certifi (>=2026.2.25,<2027.0.0)",
+    "livekit-plugins-groq (>=1.5.0,<2.0.0)",
+    "livekit-plugins-sarvam (>=1.5.0,<2.0.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
