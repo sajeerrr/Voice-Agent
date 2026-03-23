@@ -199,13 +199,17 @@ poetry run python -c "from config import settings; print('Configuration loaded s
 
 ### Running the Worker
 
-Start the voice AI worker:
+**Development Mode:**
+```bash
+poetry run python agent_worker.py dev
+```
 
+**Production Mode:**
 ```bash
 poetry run python agent_worker.py
 ```
 
-The worker will connect to your LiveKit server and be available to handle voice sessions.
+The worker will connect to your LiveKit server and be available to handle voice sessions. Use the `dev` flag for development to enable additional logging and debugging features.
 
 ### Configuration
 
