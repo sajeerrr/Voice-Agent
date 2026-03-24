@@ -1,4 +1,4 @@
-#!/bin/sh
+d#!/bin/sh
 set -e
 
 echo "Waiting for PostgreSQL to be ready..."
