@@ -1,59 +1,65 @@
-# Hestia Voice AI Workshop
+# Voice Agent
 
-A real-time voice AI agent workshop using LiveKit, Next.js, and PostgreSQL.
+A workshop project for building real-time voice AI agents with LiveKit, Next.js, and PostgreSQL.
 
-## Quick Start
+---
 
+## Setup
 ```bash
-# Start all services (PostgreSQL, Adminer, Next.js)
-docker compose up --build -d
-
-# View logs
-docker compose logs -f voice-platform
-
-# Stop services
-docker compose down
+docker compose up --build -d           # Build and start
+docker compose logs -f voice-platform  # Follow logs
+docker compose down                    # Tear down
 ```
 
-## Services
+---
 
-- **Next.js App:** `http://localhost:3000` — Main workshop application
-- **Adminer:** `http://localhost:8081` — Database admin UI
-- **PostgreSQL:** `localhost:5432` — Database
+## Running Services
 
-## Directory Structure
+| Service     | Address                  | Purpose          |
+|-------------|--------------------------|------------------|
+| App         | `http://localhost:3000`  | Next.js frontend |
+| DB Admin    | `http://localhost:8081`  | Adminer UI       |
+| Database    | `localhost:5432`         | PostgreSQL       |
 
+---
+
+## Folder Layout
 ```
-hestia-voice-ai/
-├── docker-compose.yml       # Docker orchestration
-├── voice-platform/          # Next.js app (API + frontend)
-│   ├── app/api/            # API routes
-│   ├── lib/                # Prisma client singleton
-│   ├── prisma/             # Database schema
-│   └── start.sh            # Container startup script
-└── worker/                 # LiveKit worker (Python)
+voice-agent/
+├── docker-compose.yml
+├── voice-platform/
+│   ├── app/api/        # Route handlers
+│   ├── lib/            # Prisma singleton
+│   ├── prisma/         # Schema definition
+│   └── start.sh        # Boot script
+└── worker/             # Python LiveKit worker
 ```
+
+---
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|---|---|---|
-| `/api/session` | POST | Create a new session |
-| `/api/session/end` | POST | End a session |
-| `/api/session/[id]` | GET | Fetch session + events + scores |
-| `/api/event` | POST | Log an event |
-| `/api/score` | POST | Add score + update session total |
+| Route                | Method | Action                          |
+|----------------------|--------|---------------------------------|
+| `/api/session`       | POST   | Start a new session             |
+| `/api/session/end`   | POST   | Close an active session         |
+| `/api/session/[id]`  | GET    | Get session details and scores  |
+| `/api/event`         | POST   | Record a session event          |
+| `/api/score`         | POST   | Submit score and update total   |
 
-## Database Schema
+---
 
-- **Session:** Voice AI session tracking
-- **Event:** Session events (speech, responses, etc.)
-- **Score:** Session scoring with reasons
+## Data Models
 
-## Development
+- **Session** — tracks each voice AI conversation
+- **Event** — captures in-session activity (speech, responses)
+- **Score** — stores ratings and reasons per session
 
-### Voice Platform (Next.js)
+---
 
+## Dev Setup
+
+**Next.js Platform**
 ```bash
 cd voice-platform
 npm install
@@ -61,16 +67,16 @@ npx prisma generate
 npm run dev
 ```
 
-### Worker (LiveKit)
-
+**LiveKit Worker**
 ```bash
 cd worker
-# Setup coming soon
+# Coming soon
 ```
 
-## Notes
+---
 
-- Database schema uses no foreign keys (workshop-friendly)
-- Prisma client is generated automatically in Docker
-- Source code is volume-mounted for hot-reload
-- Adminer available at `http://localhost:8081` for data inspection
+## Things to Know
+
+- Schema has no foreign keys — keeps it simple for workshops
+- Prisma generates automatically inside Docker
+- Hot-reload enabled via volume mounting
