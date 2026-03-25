@@ -26,6 +26,8 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    env_file:
+      - ./voice-platform/.env
     environment:
       DATABASE_URL: "postgresql://user:password@postgres:5432/voice_ai"
     volumes:
@@ -34,6 +36,18 @@ services:
       - /app/.next
     depends_on:
       - postgres
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./worker/.env
+    environment:
+      VOICE_PLATFORM_URL: "http://voice-platform:3000"
+    depends_on:
+      - voice-platform
 
 volumes:
   pgdata:

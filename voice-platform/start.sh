@@ -1,9 +1,8 @@
-d#!/bin/sh
+#!/bin/sh
 set -e
 
 echo "Waiting for PostgreSQL to be ready..."
-# Simple wait loop — tries to connect every 2 seconds
-until npx prisma db push 2>/dev/null; do
+until npx prisma db push >/dev/null 2>&1; do
   echo "  PostgreSQL not ready yet, retrying in 2s..."
   sleep 2
 done

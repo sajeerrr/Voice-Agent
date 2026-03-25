@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AccessToken } from "livekit-server-sdk";
+import { RoomAgentDispatch, RoomConfiguration } from "@livekit/protocol";
+
+const AGENT_NAME = "voice-assistant";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,15 +20,16 @@ export async function POST(request: NextRequest) {
 
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
+    const serverUrl = process.env.LIVEKIT_URL;
 
-    if (!apiKey || !apiSecret) {
-      // Return a mock token when LiveKit credentials are not configured
-      return NextResponse.json({
-        token: "mock-token-configure-livekit-env-vars",
-        room,
-        identity: participantIdentity,
-        serverUrl: process.env.LIVEKIT_URL || "wss://your-livekit-server.livekit.cloud",
-      });
+    if (!apiKey || !apiSecret || !serverUrl) {
+      return NextResponse.json(
+        {
+          error:
+            "LiveKit is not configured. Set LIVEKIT_URL, LIVEKIT_API_KEY, and LIVEKIT_API_SECRET.",
+        },
+        { status: 500 }
+      );
     }
 
     const token = new AccessToken(apiKey, apiSecret, {
@@ -38,6 +42,13 @@ export async function POST(request: NextRequest) {
       canPublish: true,
       canSubscribe: true,
     });
+    token.roomConfig = new RoomConfiguration({
+      agents: [
+        new RoomAgentDispatch({
+          agentName: AGENT_NAME,
+        }),
+      ],
+    });
 
     const jwt = await token.toJwt();
 
@@ -45,7 +56,7 @@ export async function POST(request: NextRequest) {
       token: jwt,
       room,
       identity: participantIdentity,
-      serverUrl: process.env.LIVEKIT_URL,
+      serverUrl,
     });
   } catch (error) {
     console.error("Failed to generate token:", error);
