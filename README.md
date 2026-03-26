@@ -1,114 +1,82 @@
-# Meeting Agents AI
+# Voice Agent
 
-A multi-agent AI system that converts meeting notes into structured action items, schedules them in Google Calendar, and sends personalized emails to attendees.
+A workshop project for building real-time voice AI agents with LiveKit, Next.js, and PostgreSQL.
 
 ---
 
 ## Setup
-
 ```bash
-python -m venv venv
-venv\Scripts\activate        # Windows
-pip install -r requirements.txt
-python meeting_agents.py
+docker compose up --build -d           # Build and start
+docker compose logs -f voice-platform  # Follow logs
+docker compose down                    # Tear down
 ```
 
 ---
 
-## Requirements
+## Running Services
 
-| Tool                | Purpose          |
-| ------------------- | ---------------- |
-| Python 3            | Core runtime     |
-| Groq API            | LLM processing   |
-| Google Calendar API | Event scheduling |
-| Gmail SMTP          | Email sending    |
+| Service     | Address                  | Purpose          |
+|-------------|--------------------------|------------------|
+| App         | `http://localhost:3000`  | Next.js frontend |
+| DB Admin    | `http://localhost:8081`  | Adminer UI       |
+| Database    | `localhost:5432`         | PostgreSQL       |
 
 ---
 
 ## Folder Layout
-
 ```
-agenticai/
-├── meeting_agents.py      # Main multi-agent script
-├── .env                   # API keys (ignored)
-├── credentials.json       # Google OAuth (ignored)
-├── token.json             # Auth token (auto-generated)
-├── meeting_output.txt     # Generated output
-├── .gitignore
-└── venv/
+voice-agent/
+├── docker-compose.yml
+├── voice-platform/
+│   ├── app/api/        # Route handlers
+│   ├── lib/            # Prisma singleton
+│   ├── prisma/         # Schema definition
+│   └── start.sh        # Boot script
+└── worker/             # Python LiveKit worker
 ```
 
 ---
 
-## Workflow
+## API Endpoints
 
-1. User inputs:
-
-   * Email credentials
-   * Attendees
-   * Meeting notes
-
-2. Agents process:
-
-   * **Agent 1** → Summarize notes
-   * **Agent 2** → Extract action items
-   * **Agent 3** → Assign priorities
-   * **Agent 4** → Generate messages
-
-3. System actions:
-
-   * 📅 Create Google Calendar events
-   * 📨 Send emails to attendees
-   * 📝 Save results to file
+| Route                | Method | Action                          |
+|----------------------|--------|---------------------------------|
+| `/api/session`       | POST   | Start a new session             |
+| `/api/session/end`   | POST   | Close an active session         |
+| `/api/session/[id]`  | GET    | Get session details and scores  |
+| `/api/event`         | POST   | Record a session event          |
+| `/api/score`         | POST   | Submit score and update total   |
 
 ---
 
-## Example Output
+## Data Models
 
+- **Session** — tracks each voice AI conversation
+- **Event** — captures in-session activity (speech, responses)
+- **Score** — stores ratings and reasons per session
+
+---
+
+## Dev Setup
+
+**Next.js Platform**
 ```bash
-📅 Sajeer — Fix login bug
-🕖 7:00 PM – 8:00 PM
-📆 27 March 2026
+cd voice-platform
+npm install
+npx prisma generate
+npm run dev
 ```
 
----
-
-## Environment Variables
-
-Create a `.env` file:
-
-```env
-API_KEY=your_groq_api_key
+**LiveKit Worker**
+```bash
+cd worker
+# Coming soon
 ```
-
----
-
-## Google Calendar Setup
-
-1. Go to Google Cloud Console
-2. Enable Google Calendar API
-3. Download `credentials.json`
-4. Place it in project root
-5. Run app → login once → `token.json` auto-created
 
 ---
 
 ## Things to Know
 
-* Uses multi-agent architecture for task automation
-* Deadlines are parsed into real date-time events
-* OAuth is cached using `token.json`
-* `.env`, `credentials.json`, and `token.json` must NOT be committed
-
----
-
-## Future Improvements
-
-* Smart scheduling (avoid time conflicts)
-* JSON-based structured outputs
-* Voice input support
-* Desktop UI (Tauri / Electron)
-* SaaS deployment
-
----
+- Schema has no foreign keys — keeps it simple for workshops
+- Prisma generates automatically inside Docker
+- Hot-reload enabled via volume mounting
